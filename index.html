@@ -40,8 +40,6 @@ margin-top:5px;
 margin-bottom:30px;
 }
 
-/* CARD */
-
 .card{
 background:#141414;
 border-radius:6px;
@@ -49,8 +47,6 @@ padding:30px;
 border-top:3px solid #ff3b30;
 margin-bottom:30px;
 }
-
-/* FORM */
 
 .form{
 display:grid;
@@ -85,8 +81,6 @@ button:hover{
 background:#ff4d43;
 }
 
-/* FILTERS */
-
 .filters{
 display:flex;
 gap:8px;
@@ -106,8 +100,6 @@ color:#ccc;
 background:#ff3b30;
 color:white;
 }
-
-/* TABLE */
 
 .table-card{
 background:#141414;
@@ -130,21 +122,6 @@ font-size:13px;
 td{
 padding:12px;
 border-top:1px solid #242424;
-}
-
-.rank-high{
-color:#22c55e;
-font-weight:600;
-}
-
-.rank-medium{
-color:#f59e0b;
-font-weight:600;
-}
-
-.rank-low{
-color:#6b7280;
-font-weight:600;
 }
 
 .notes{
@@ -245,7 +222,6 @@ Submit, rank and evaluate new business ideas
 
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -254,17 +230,22 @@ const { createClient } = supabase
 
 const db = createClient(
 "https://lelymholbfpyqrusmxsl.supabase.co",
-"YOUR_PUBLIC_KEY"
+"sb_publishable_vcNodu6UCpE2jxo0YDlC6Q_9NKkOv8u"
 )
 
 let ideas=[]
 
 async function loadIdeas(){
 
-const {data}=await db
+const {data,error}=await db
 .from("ideas")
 .select("*")
 .order("id",{ascending:false})
+
+if(error){
+console.error(error)
+return
+}
 
 ideas=data||[]
 
@@ -279,13 +260,19 @@ const idea=document.getElementById("idea").value
 const description=document.getElementById("description").value
 const rank=document.getElementById("rank").value
 
-await db.from("ideas").insert({
+const {error}=await db.from("ideas").insert({
 person,
 idea,
 description,
 rank,
 notes:""
 })
+
+if(error){
+console.error(error)
+alert(error.message)
+return
+}
 
 document.getElementById("idea").value=""
 document.getElementById("description").value=""
@@ -296,19 +283,27 @@ loadIdeas()
 
 async function deleteIdea(id){
 
-await db.from("ideas").delete().eq("id",id)
+const {error}=await db.from("ideas").delete().eq("id",id)
+
+if(error) console.error(error)
+
+loadIdeas()
 
 }
 
 async function updateRank(id,value){
 
-await db.from("ideas").update({rank:value}).eq("id",id)
+const {error}=await db.from("ideas").update({rank:value}).eq("id",id)
+
+if(error) console.error(error)
 
 }
 
 async function updateNotes(id,value){
 
-await db.from("ideas").update({notes:value}).eq("id",id)
+const {error}=await db.from("ideas").update({notes:value}).eq("id",id)
+
+if(error) console.error(error)
 
 }
 
@@ -363,6 +358,14 @@ oninput="updateNotes(${i.id},this.value)">
 }
 
 loadIdeas()
+
+db.channel('ideas-live')
+.on(
+'postgres_changes',
+{event:'*',schema:'public',table:'ideas'},
+payload => loadIdeas()
+)
+.subscribe()
 
 </script>
 
