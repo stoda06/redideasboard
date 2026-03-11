@@ -1,62 +1,172 @@
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RED IDEAS — Business Innovation Board</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Business Innovation Board</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
+
 body{
-  font-family:'DM Sans',sans-serif;
-  background:#0D0D0D;
-  color:#E8E8E8;
-  margin:0;
-  padding:40px;
+font-family:'DM Sans',sans-serif;
+background:#0b0b0b;
+color:#e5e5e5;
+margin:0;
 }
 
-h1{
-  font-family:'Bebas Neue';
-  letter-spacing:2px;
+/* HEADER */
+
+.header{
+padding:40px 60px 20px 60px;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:20px;
+.title{
+font-family:'Bebas Neue';
+font-size:54px;
+letter-spacing:2px;
 }
 
-th,td{
-  padding:12px;
-  border-bottom:1px solid #2E2E2E;
+.title span{
+color:#ff3b30;
 }
 
-input,select{
-  background:#1A1A1A;
-  color:white;
-  border:1px solid #333;
-  padding:8px;
+.subtitle{
+color:#9ca3af;
+margin-top:6px;
+font-size:14px;
+}
+
+/* LAYOUT */
+
+.container{
+padding:0 60px 60px 60px;
+}
+
+/* CARD */
+
+.card{
+background:#151515;
+border-radius:6px;
+padding:25px;
+margin-bottom:30px;
+border-top:3px solid #ff3b30;
+}
+
+/* FORM */
+
+.form-row{
+display:flex;
+gap:12px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+input, select{
+background:#0f0f0f;
+border:1px solid #2a2a2a;
+color:white;
+padding:10px;
+border-radius:4px;
+}
+
+input{
+width:220px;
+}
+
+textarea{
+width:380px;
+background:#0f0f0f;
+border:1px solid #2a2a2a;
+color:white;
+padding:10px;
+border-radius:4px;
 }
 
 button{
-  padding:8px 14px;
-  cursor:pointer;
+background:#ff3b30;
+border:none;
+color:white;
+padding:10px 18px;
+border-radius:4px;
+font-weight:600;
+cursor:pointer;
 }
 
-.rank-HIGH{color:#22C55E}
-.rank-MEDIUM{color:#F59E0B}
-.rank-LOW{color:#6B7280}
+button:hover{
+background:#ff4d43;
+}
+
+/* TABLE */
+
+.table-card{
+background:#151515;
+border-radius:6px;
+padding:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+text-align:left;
+padding:12px;
+color:#9ca3af;
+font-size:13px;
+}
+
+td{
+padding:12px;
+border-top:1px solid #242424;
+}
+
+.rank-HIGH{color:#22c55e}
+.rank-MEDIUM{color:#f59e0b}
+.rank-LOW{color:#6b7280}
+
+.notes{
+width:220px;
+}
+
+.delete-btn{
+background:#2a2a2a;
+padding:6px 10px;
+border-radius:4px;
+}
+
 </style>
 
 </head>
 
+
 <body>
 
-<h1>RED IDEAS BOARD</h1>
 
-<div>
+<div class="header">
+
+<div class="title">
+BUSINESS <span>INNOVATION</span> BOARD
+</div>
+
+<div class="subtitle">
+Submit, rank and evaluate new business ideas
+</div>
+
+</div>
+
+
+<div class="container">
+
+
+<div class="card">
+
+<div class="form-row">
+
 <select id="f-person">
 <option>Dan</option>
 <option>Alex</option>
@@ -64,8 +174,9 @@ button{
 <option>Other</option>
 </select>
 
-<input id="f-idea" placeholder="Idea name">
-<input id="f-desc" placeholder="Description">
+<input id="f-idea" placeholder="Idea title">
+
+<textarea id="f-desc" placeholder="Supporting description"></textarea>
 
 <select id="f-rank">
 <option value="">Unranked</option>
@@ -74,12 +185,19 @@ button{
 <option value="LOW">LOW</option>
 </select>
 
-<button onclick="addIdea()">Add</button>
+<button onclick="addIdea()">+ ADD IDEA</button>
 
 </div>
 
+</div>
+
+
+<div class="table-card">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Person</th>
 <th>Idea</th>
@@ -88,11 +206,18 @@ button{
 <th>Notes</th>
 <th></th>
 </tr>
+
 </thead>
 
 <tbody id="ideasBody"></tbody>
 
 </table>
+
+</div>
+
+</div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -108,60 +233,72 @@ const db = createClient(supabaseUrl, supabaseKey)
 let ideas = []
 
 function escHtml(str){
-  if(!str) return ''
-  return str.replace(/&/g,'&amp;')
-            .replace(/</g,'&lt;')
-            .replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;')
+if(!str) return ''
+return str.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
 }
+
 
 async function loadIdeas(){
 
-  const { data, error } = await db
-    .from("ideas")
-    .select("*")
-    .order("created_at",{ascending:false})
+const { data, error } = await db
+.from("ideas")
+.select("*")
+.order("id",{ascending:false})
 
-  if(error) console.error(error)
+ideas = data || []
 
-  ideas = data || []
+render()
 
-  render()
 }
+
 
 async function addIdea(){
 
-  const person = document.getElementById('f-person').value
-  const idea = document.getElementById('f-idea').value
-  const desc = document.getElementById('f-desc').value
-  const rank = document.getElementById('f-rank').value
+const person = document.getElementById('f-person').value
+const idea = document.getElementById('f-idea').value
+const description = document.getElementById('f-desc').value
+const rank = document.getElementById('f-rank').value
 
-  await db.from("ideas").insert([
-    { person, idea, desc, rank, notes:"" }
-  ])
+await db.from("ideas").insert({
+person,
+idea,
+description,
+rank,
+notes:""
+})
 
-  document.getElementById('f-idea').value=''
-  document.getElementById('f-desc').value=''
+document.getElementById('f-idea').value=''
+document.getElementById('f-desc').value=''
+
+loadIdeas()
 
 }
+
 
 async function deleteIdea(id){
-  await db.from("ideas").delete().eq("id",id)
+await db.from("ideas").delete().eq("id",id)
 }
+
 
 async function updateRank(id,val){
-  await db.from("ideas").update({rank:val}).eq("id",id)
+await db.from("ideas").update({rank:val}).eq("id",id)
 }
 
+
 async function updateNotes(id,val){
-  await db.from("ideas").update({notes:val}).eq("id",id)
+await db.from("ideas").update({notes:val}).eq("id",id)
 }
+
+
 
 function render(){
 
-  const body = document.getElementById("ideasBody")
+const body = document.getElementById("ideasBody")
 
-  body.innerHTML = ideas.map(i => `
+body.innerHTML = ideas.map(i => `
 
 <tr>
 
@@ -169,12 +306,11 @@ function render(){
 
 <td>${escHtml(i.idea)}</td>
 
-<td>${escHtml(i.desc)}</td>
+<td>${escHtml(i.description)}</td>
 
 <td>
 
-<select onchange="updateRank(${i.id},this.value)"
-class="rank-${i.rank}">
+<select onchange="updateRank(${i.id},this.value)" class="rank-${i.rank}">
 
 <option value="">Unranked</option>
 <option value="HIGH" ${i.rank==="HIGH"?"selected":""}>HIGH</option>
@@ -186,34 +322,42 @@ class="rank-${i.rank}">
 </td>
 
 <td>
-<input value="${escHtml(i.notes||'')}"
+
+<input class="notes"
+value="${escHtml(i.notes||'')}"
 oninput="updateNotes(${i.id},this.value)">
+
 </td>
 
 <td>
-<button onclick="deleteIdea(${i.id})">X</button>
+
+<button class="delete-btn" onclick="deleteIdea(${i.id})">X</button>
+
 </td>
 
 </tr>
 
 `).join('')
+
 }
+
 
 loadIdeas()
 
-/* REALTIME LISTENER */
 
 db.channel('ideas-live')
 .on(
-  'postgres_changes',
-  {event:'*',schema:'public',table:'ideas'},
-  payload => {
-    loadIdeas()
-  }
+'postgres_changes',
+{event:'*',schema:'public',table:'ideas'},
+payload => {
+loadIdeas()
+}
 )
 .subscribe()
 
 </script>
 
+
 </body>
+
 </html>
