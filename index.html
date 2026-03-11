@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Business Innovation Board</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-font-family:'DM Sans',sans-serif;
 background:#0b0b0b;
+font-family:Inter;
 color:#e5e5e5;
 margin:0;
 }
 
-/* HEADER */
-
-.header{
-padding:40px 60px 20px 60px;
+.container{
+max-width:1400px;
+margin:auto;
+padding:40px;
 }
 
 .title{
-font-family:'Bebas Neue';
-font-size:54px;
+font-family:Bebas Neue;
+font-size:64px;
 letter-spacing:2px;
 }
 
@@ -36,74 +36,81 @@ color:#ff3b30;
 
 .subtitle{
 color:#9ca3af;
-margin-top:6px;
-font-size:14px;
-}
-
-/* LAYOUT */
-
-.container{
-padding:0 60px 60px 60px;
+margin-top:5px;
+margin-bottom:30px;
 }
 
 /* CARD */
 
 .card{
-background:#151515;
+background:#141414;
 border-radius:6px;
-padding:25px;
-margin-bottom:30px;
+padding:30px;
 border-top:3px solid #ff3b30;
+margin-bottom:30px;
 }
 
 /* FORM */
 
-.form-row{
-display:flex;
-gap:12px;
+.form{
+display:grid;
+grid-template-columns:150px 250px 1fr 160px 140px;
+gap:15px;
 align-items:center;
-flex-wrap:wrap;
 }
 
-input, select{
-background:#0f0f0f;
+input,select,textarea{
+background:#0d0d0d;
 border:1px solid #2a2a2a;
-color:white;
 padding:10px;
 border-radius:4px;
-}
-
-input{
-width:220px;
+color:white;
 }
 
 textarea{
-width:380px;
-background:#0f0f0f;
-border:1px solid #2a2a2a;
-color:white;
-padding:10px;
-border-radius:4px;
+height:40px;
 }
 
 button{
 background:#ff3b30;
 border:none;
-color:white;
-padding:10px 18px;
+padding:10px 16px;
 border-radius:4px;
 font-weight:600;
 cursor:pointer;
+color:white;
 }
 
 button:hover{
 background:#ff4d43;
 }
 
+/* FILTERS */
+
+.filters{
+display:flex;
+gap:8px;
+margin-bottom:20px;
+}
+
+.filter{
+background:#1f1f1f;
+border:none;
+padding:6px 12px;
+border-radius:4px;
+cursor:pointer;
+color:#ccc;
+}
+
+.filter.active{
+background:#ff3b30;
+color:white;
+}
+
 /* TABLE */
 
 .table-card{
-background:#151515;
+background:#141414;
 border-radius:6px;
 padding:20px;
 }
@@ -125,29 +132,46 @@ padding:12px;
 border-top:1px solid #242424;
 }
 
-.rank-HIGH{color:#22c55e}
-.rank-MEDIUM{color:#f59e0b}
-.rank-LOW{color:#6b7280}
-
-.notes{
-width:220px;
+.rank-high{
+color:#22c55e;
+font-weight:600;
 }
 
-.delete-btn{
-background:#2a2a2a;
+.rank-medium{
+color:#f59e0b;
+font-weight:600;
+}
+
+.rank-low{
+color:#6b7280;
+font-weight:600;
+}
+
+.notes{
+width:200px;
+}
+
+.delete{
+background:#333;
+border:none;
 padding:6px 10px;
 border-radius:4px;
+cursor:pointer;
+}
+
+.empty{
+text-align:center;
+padding:60px;
+color:#666;
 }
 
 </style>
 
 </head>
 
-
 <body>
 
-
-<div class="header">
+<div class="container">
 
 <div class="title">
 BUSINESS <span>INNOVATION</span> BOARD
@@ -157,32 +181,26 @@ BUSINESS <span>INNOVATION</span> BOARD
 Submit, rank and evaluate new business ideas
 </div>
 
-</div>
-
-
-<div class="container">
-
-
 <div class="card">
 
-<div class="form-row">
+<div class="form">
 
-<select id="f-person">
+<select id="person">
 <option>Dan</option>
 <option>Alex</option>
 <option>Mike</option>
 <option>Other</option>
 </select>
 
-<input id="f-idea" placeholder="Idea title">
+<input id="idea" placeholder="Idea title">
 
-<textarea id="f-desc" placeholder="Supporting description"></textarea>
+<textarea id="description" placeholder="Supporting description"></textarea>
 
-<select id="f-rank">
+<select id="rank">
 <option value="">Unranked</option>
-<option value="HIGH">HIGH</option>
-<option value="MEDIUM">MEDIUM</option>
-<option value="LOW">LOW</option>
+<option>HIGH</option>
+<option>MEDIUM</option>
+<option>LOW</option>
 </select>
 
 <button onclick="addIdea()">+ ADD IDEA</button>
@@ -191,13 +209,20 @@ Submit, rank and evaluate new business ideas
 
 </div>
 
+<div class="filters">
+<button class="filter active">All</button>
+<button class="filter">Dan</button>
+<button class="filter">Alex</button>
+<button class="filter">Mike</button>
+<button class="filter">Other</button>
+<button class="filter">High Priority</button>
+</div>
 
 <div class="table-card">
 
 <table>
 
 <thead>
-
 <tr>
 <th>Person</th>
 <th>Idea</th>
@@ -206,17 +231,19 @@ Submit, rank and evaluate new business ideas
 <th>Notes</th>
 <th></th>
 </tr>
-
 </thead>
 
-<tbody id="ideasBody"></tbody>
+<tbody id="ideas"></tbody>
 
 </table>
 
+<div id="empty" class="empty">
+💡 NO IDEAS YET
 </div>
 
 </div>
 
+</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -225,42 +252,32 @@ Submit, rank and evaluate new business ideas
 
 const { createClient } = supabase
 
-const supabaseUrl = "https://lelymholbfpyqrusmxsl.supabase.co"
-const supabaseKey = "sb_publishable_vcNodu6UCpE2jxo0YDlC6Q_9NKkOv8u"
+const db = createClient(
+"https://lelymholbfpyqrusmxsl.supabase.co",
+"YOUR_PUBLIC_KEY"
+)
 
-const db = createClient(supabaseUrl, supabaseKey)
-
-let ideas = []
-
-function escHtml(str){
-if(!str) return ''
-return str.replace(/&/g,'&amp;')
-.replace(/</g,'&lt;')
-.replace(/>/g,'&gt;')
-.replace(/"/g,'&quot;')
-}
-
+let ideas=[]
 
 async function loadIdeas(){
 
-const { data, error } = await db
+const {data}=await db
 .from("ideas")
 .select("*")
 .order("id",{ascending:false})
 
-ideas = data || []
+ideas=data||[]
 
 render()
 
 }
 
-
 async function addIdea(){
 
-const person = document.getElementById('f-person').value
-const idea = document.getElementById('f-idea').value
-const description = document.getElementById('f-desc').value
-const rank = document.getElementById('f-rank').value
+const person=document.getElementById("person").value
+const idea=document.getElementById("idea").value
+const description=document.getElementById("description").value
+const rank=document.getElementById("rank").value
 
 await db.from("ideas").insert({
 person,
@@ -270,94 +287,84 @@ rank,
 notes:""
 })
 
-document.getElementById('f-idea').value=''
-document.getElementById('f-desc').value=''
+document.getElementById("idea").value=""
+document.getElementById("description").value=""
 
 loadIdeas()
 
 }
 
-
 async function deleteIdea(id){
+
 await db.from("ideas").delete().eq("id",id)
+
 }
 
+async function updateRank(id,value){
 
-async function updateRank(id,val){
-await db.from("ideas").update({rank:val}).eq("id",id)
+await db.from("ideas").update({rank:value}).eq("id",id)
+
 }
 
+async function updateNotes(id,value){
 
-async function updateNotes(id,val){
-await db.from("ideas").update({notes:val}).eq("id",id)
+await db.from("ideas").update({notes:value}).eq("id",id)
+
 }
-
-
 
 function render(){
 
-const body = document.getElementById("ideasBody")
+const body=document.getElementById("ideas")
+const empty=document.getElementById("empty")
 
-body.innerHTML = ideas.map(i => `
+if(ideas.length===0){
+empty.style.display="block"
+body.innerHTML=""
+return
+}
+
+empty.style.display="none"
+
+body.innerHTML=ideas.map(i=>`
 
 <tr>
 
-<td>${escHtml(i.person)}</td>
-
-<td>${escHtml(i.idea)}</td>
-
-<td>${escHtml(i.description)}</td>
+<td>${i.person}</td>
+<td>${i.idea}</td>
+<td>${i.description}</td>
 
 <td>
 
-<select onchange="updateRank(${i.id},this.value)" class="rank-${i.rank}">
+<select onchange="updateRank(${i.id},this.value)">
 
-<option value="">Unranked</option>
-<option value="HIGH" ${i.rank==="HIGH"?"selected":""}>HIGH</option>
-<option value="MEDIUM" ${i.rank==="MEDIUM"?"selected":""}>MEDIUM</option>
-<option value="LOW" ${i.rank==="LOW"?"selected":""}>LOW</option>
+<option ${i.rank===""?"selected":""}>Unranked</option>
+<option ${i.rank==="HIGH"?"selected":""}>HIGH</option>
+<option ${i.rank==="MEDIUM"?"selected":""}>MEDIUM</option>
+<option ${i.rank==="LOW"?"selected":""}>LOW</option>
 
 </select>
 
 </td>
 
 <td>
-
 <input class="notes"
-value="${escHtml(i.notes||'')}"
+value="${i.notes||""}"
 oninput="updateNotes(${i.id},this.value)">
-
 </td>
 
 <td>
-
-<button class="delete-btn" onclick="deleteIdea(${i.id})">X</button>
-
+<button class="delete" onclick="deleteIdea(${i.id})">X</button>
 </td>
 
 </tr>
 
-`).join('')
+`).join("")
 
 }
 
-
 loadIdeas()
-
-
-db.channel('ideas-live')
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'ideas'},
-payload => {
-loadIdeas()
-}
-)
-.subscribe()
 
 </script>
 
-
 </body>
-
 </html>
